@@ -1,0 +1,21 @@
+{
+  "name": "get-my-location",
+  "version": "1.0.0",
+  "description": "This is a simple how to get my location using GPS and Leaflet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "example",
+    "data",
+    "leaflet",
+    "express",
+    "location"
+  ],
+  "author": "Madalin Antonoiu",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
