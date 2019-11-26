@@ -5,4 +5,5 @@ What this program does after you clicked:
 - It geolocates you.
 - It sends your lat and lon to the server. (check server's console)
 - It sends a message back to client with same data. (check client's console)
+- Saves all the data into .data/datafile (it is hidden but can be seen from server console)
 
