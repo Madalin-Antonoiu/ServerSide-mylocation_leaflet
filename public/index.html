@@ -26,39 +26,52 @@
     <h1>My Location</h1>
     <p>
       latitude: <span id="latitude"></span>&deg;<br />
-      longitude: <span id="longitude"></span>&deg;
+      longitude: <span id="longitude"></span>&deg;<br />
+      date and time: <span id="dateTime"></span>
     </p>
     <button id="geolocate">Locate Me</button>
     <div id="mymap"></div>
 
     <script>
+      
        document.getElementById('geolocate').addEventListener('click', event => {
+            
+     
+         
           if ('geolocation' in navigator) {
             console.log('geolocation available');
-            
+             
+      
             //Navigator.geolocation API - Mozilla MDN
             navigator.geolocation.getCurrentPosition(async position => {
+              var today = new Date();
+              dateTime = today.toString();
+              
               lat = position.coords.latitude;
               lon = position.coords.longitude;
+              
               //console.log(lat, lon);
               document.getElementById('latitude').textContent = lat;
               document.getElementById('longitude').textContent = lon;
+              document.getElementById('dateTime').textContent = dateTime;
               
               //2. POST fetch to server - see MDN for more
-              const data = {lat, lon};
+              const data = {lat, lon, dateTime};
               const options = {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'  //i wnt to tell you that it is going to be JSON          
                 },
-                body: JSON.stringify(data)      //i want this data as JSON
+                body: JSON.stringify(data)
               }
               //Fetch
               const response = await fetch('/api', options); //await get response
               const json = await response.json();  //await to json it
               console.log(json);
               
-              //Leaflet API
+              // Leaflet API
+              
+              //Creating MAP
               const mymap = L.map('mymap').setView([lat, lon], 15);
               const attribution =
                 '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -66,7 +79,7 @@
               const tiles = L.tileLayer(tileUrl, { attribution });
               tiles.addTo(mymap);
               const marker = L.marker([lat, lon]).addTo(mymap);
-            })
+            });
 
           } else {
             console.log('geolocation not available');
