@@ -28,29 +28,49 @@
       latitude: <span id="latitude"></span>&deg;<br />
       longitude: <span id="longitude"></span>&deg;
     </p>
+    <button id="geolocate">Locate Me</button>
     <div id="mymap"></div>
-    
+
     <script>
-      if ('geolocation' in navigator) {
-        console.log('geolocation available');
-        navigator.geolocation.getCurrentPosition(position => {
-          lat = position.coords.latitude;
-          lon = position.coords.longitude;
-          console.log(lat, lon);
-          document.getElementById('latitude').textContent = lat;
-          document.getElementById('longitude').textContent = lon;
-          const mymap = L.map('mymap').setView([lat, lon], 15);
-          const attribution =
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-          const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-          const tiles = L.tileLayer(tileUrl, { attribution });
-          tiles.addTo(mymap);
-          const marker = L.marker([lat, lon]).addTo(mymap);
-        });
-      } else {
-        console.log('geolocation not available');
-      }
+       document.getElementById('geolocate').addEventListener('click', event => {
+          if ('geolocation' in navigator) {
+            console.log('geolocation available');
+            
+            //Navigator.geolocation API - Mozilla MDN
+            navigator.geolocation.getCurrentPosition(async position => {
+              lat = position.coords.latitude;
+              lon = position.coords.longitude;
+              //console.log(lat, lon);
+              document.getElementById('latitude').textContent = lat;
+              document.getElementById('longitude').textContent = lon;
+              
+              //2. POST fetch to server - see MDN for more
+              const data = {lat, lon};
+              const options = {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'  //i wnt to tell you that it is going to be JSON          
+                },
+                body: JSON.stringify(data)      //i want this data as JSON
+              }
+              //Fetch
+              const response = await fetch('/api', options); //await get response
+              const json = await response.json();  //await to json it
+              console.log(json);
+              
+              //Leaflet API
+              const mymap = L.map('mymap').setView([lat, lon], 15);
+              const attribution =
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+              const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+              const tiles = L.tileLayer(tileUrl, { attribution });
+              tiles.addTo(mymap);
+              const marker = L.marker([lat, lon]).addTo(mymap);
+            })
+
+          } else {
+            console.log('geolocation not available');
+        }});
     </script>
-    
   </body>
 </html>
