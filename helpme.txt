@@ -1,1 +1,8 @@
-1. Run 'node index.js' in the root directory to start the server.
+1. Console 'node server.js' or 'nodemon server.js'(automatic server restart on changes) in the root directory to start the server.
+2. Click 'Locate me' on the web page and grant location permission.
+
+What this program does after you clicked:
+- It geolocates you.
+- It sends your lat and lon to the server. (check server's console)
+- It sends a message back to client with same data. (check client's console)
+
