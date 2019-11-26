@@ -4,14 +4,22 @@
 const express = require("express"); //I import this in order to be able to create an app
 const app = express(); // the whole library comes in as a function that i can execute
 
-//Testing with being able to see if request is from mobile or not (client)
-//const index = navigator.appVersion.indexOf("Mobile");
+//Detecting device
+const useragent = require('express-useragent');
+app.use(useragent.express());
 
 //Start listening  - (port, callback)
 app.listen(3000, () => console.log("Listening at Port: 3000.")); //This will be displayed in bash
 
 //So when i run this and open localhost:3000 in the browser, i want to see index.html
 //The way i do that is by telling express to host my static files!
+
+//Date and time
+var today = new Date();
+var dateTime = today.toString();
+
+
+
 
 //you can also give it just a file, but better to put in a folder
 app.use(express.static("public"));
@@ -25,13 +33,17 @@ app.use(express.json({limit:'1mb'}));
 
 // 1. POST method route - What i am really doing is creating an API! Next i need to POST data from client to here
 app.post('/api', (request, response) => {
-  console.log('I got a request!')
+  console.log(dateTime);
+  console.log('I got a request from ' + request.useragent.source);//line 8,9
   console.log(request.body);
   //response.end(); to finish. or just send some data back like below
+  //You see this in Client console :)
   response.json({
     status: "O mers!",
     latitude: request.body.lat,
-    longitude: request.body.lon
+    longitude: request.body.lon,
+    device: request.useragent.source,
+    dateTime: dateTime
   }); 
 });
 
