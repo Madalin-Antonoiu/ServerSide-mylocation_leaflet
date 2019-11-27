@@ -27,63 +27,73 @@
     <p>
       latitude: <span id="latitude"></span>&deg;<br />
       longitude: <span id="longitude"></span>&deg;<br />
-      date and time: <span id="dateTime"></span>
+      date and time: <span id="dateTime"></span><br />
+      device: <span id="device"></span><br />
+      network: <span id="network"></span><br />
     </p>
     <button id="geolocate">Locate Me</button>
     <div id="mymap"></div>
 
     <script>
-      
-       document.getElementById('geolocate').addEventListener('click', event => {
-            
-     
-         
-          if ('geolocation' in navigator) {
-            console.log('geolocation available');
-             
-      
-            //Navigator.geolocation API - Mozilla MDN
-            navigator.geolocation.getCurrentPosition(async position => {
-              var today = new Date();
-              dateTime = today.toString();
-              
-              lat = position.coords.latitude;
-              lon = position.coords.longitude;
-              
-              //console.log(lat, lon);
-              document.getElementById('latitude').textContent = lat;
-              document.getElementById('longitude').textContent = lon;
-              document.getElementById('dateTime').textContent = dateTime;
-              
-              //2. POST fetch to server - see MDN for more
-              const data = {lat, lon, dateTime};
-              const options = {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'  //i wnt to tell you that it is going to be JSON          
-                },
-                body: JSON.stringify(data)
-              }
-              //Fetch
-              const response = await fetch('/api', options); //await get response
-              const json = await response.json();  //await to json it
-              console.log(json);
-              
-              // Leaflet API
-              
-              //Creating MAP
-              const mymap = L.map('mymap').setView([lat, lon], 15);
-              const attribution =
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-              const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-              const tiles = L.tileLayer(tileUrl, { attribution });
-              tiles.addTo(mymap);
-              const marker = L.marker([lat, lon]).addTo(mymap);
-            });
+      document.getElementById("geolocate").addEventListener("click", event => {
+        if ("geolocation" in navigator) {
+          console.log("geolocation available");
 
-          } else {
-            console.log('geolocation not available');
-        }});
+          //Navigator.geolocation API - Mozilla MDN
+          navigator.geolocation.getCurrentPosition(async position => {
+            const today = new Date();
+            const dateTime = today.toString();
+            const device = navigator.userAgent;
+            const network = 
+            { type: navigator.connection.effectiveType,
+              downlink: navigator.connection.downlink
+            } 
+
+          
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
+
+            //console.log(lat, lon);
+            document.getElementById("latitude").textContent = lat;
+            document.getElementById("longitude").textContent = lon;
+            document.getElementById("dateTime").textContent = dateTime;
+            document.getElementById("device").textContent = device;
+            document.getElementById("network").textContent = network.type + ', downlink: ' + network.downlink + ' mb';
+            
+           
+
+            //2. POST fetch to server - see MDN for more
+            const data = { dateTime, device, lat, lon, network }; //The order i specify here dictates the order inside database too
+
+            const options = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json" //i wnt to tell you that it is going to be JSON
+              },
+              body: JSON.stringify(data)
+            };
+
+            //Fetch
+            const response = await fetch("/api", options); //await get response
+            const json = await response.json(); //await to json it
+            console.log(json);
+
+            // Leaflet API
+
+            //Creating MAP
+            const mymap = L.map("mymap").setView([lat, lon], 15);
+            const attribution =
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+            const tileUrl =
+              "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+            const tiles = L.tileLayer(tileUrl, { attribution });
+            tiles.addTo(mymap);
+            const marker = L.marker([lat, lon]).addTo(mymap);
+          });
+        } else {
+          console.log("geolocation not available");
+        }
+      });
     </script>
   </body>
 </html>
